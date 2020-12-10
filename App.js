@@ -1,11 +1,32 @@
 import { StatusBar } from 'expo-status-bar';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { StyleSheet, Text, View, } from 'react-native';
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
+import { TouchableOpacity } from 'react-native-gesture-handler';
+import {Ionicons} from "@expo/vector-icons";
 
 
-function NotesScreen(){
+function NotesScreen({navigation}){
+
+  useEffect (()=>{
+    navigation.setOptions({
+      headerRight: () => (
+        <TouchableOpacity onPress={addNote}>
+          <Ionicons
+            name="create"
+            size={35}
+            color="#000080"
+            style={{ marginRight:15 }}
+          />
+        </TouchableOpacity>
+      )
+    })
+  })
+
+  function addNote() {
+    console.log("Add Note")
+  }
 
   return (
     <View style={styles.container}>
@@ -26,6 +47,7 @@ export default function App() {
           component={NotesScreen}
           options={{
             headerTitle: "Notes, a ToDo App",
+            headerTintColor:"#000080",
             headerTitleStyle: {
               fontWeight: "bold",
               fontSize: 30,
