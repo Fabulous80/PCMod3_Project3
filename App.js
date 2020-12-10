@@ -25,7 +25,7 @@ export default function App() {
           name="Notes"
           component={NotesScreen}
           options={{
-            headerTitle: "Notes App",
+            headerTitle: "Notes, a ToDo App",
             headerTitleStyle: {
               fontWeight: "bold",
               fontSize: 30,
@@ -35,6 +35,10 @@ export default function App() {
               backgroundColor: "yellow",
               borderBottomColor: "#ccc",
               borderBottomWidth: 1,
+              shadowColor:"black",
+              shadowOpacity:0.2,
+              shadowRadius:5,
+
             },
           }}
         />
