@@ -19,7 +19,7 @@ export default function NotesScreen({ navigation, route }) {
   function refreshNotes() {
     db.transaction((tx) => {
       tx.executeSql(
-        "SELECT * FROM notes",
+        "SELECT * FROM notes ORDER BY done ASC",
         null,
         (txObj, { rows: { _array } }) => setNotes(_array),
         (txObj, error) => console.log(`Error, ${error}`)
@@ -98,6 +98,25 @@ export default function NotesScreen({ navigation, route }) {
     );
   }
 
+  function taskDone(id) {
+    db.transaction(
+      (tx) => {
+        tx.executeSql(
+          "UPDATE notes SET done = 1 WHERE id=?",
+          [id],
+          (tx, results) => {
+            console.log("Results", results.rowsAffected);
+            if (results.rowsAffected > 0) {
+              alert("Task Completed");
+            }
+          }
+        );
+      },
+      null,
+      refreshNotes
+    );
+  }
+
   function renderItem({ item }) {
     return (
       <View
@@ -132,6 +151,74 @@ export default function NotesScreen({ navigation, route }) {
         </TouchableOpacity>
       </View>
     );
+  }
+
+  function renderItem({ item }) {
+    if(item.done==0){
+    return (
+      <View
+        style={{
+          padding: 10,
+          paddingTop: 20,
+          paddingBottom: 20,
+          borderBottomColor: "#ccc",
+          borderBottomWidth: 1,
+          flexDirection: "row",
+          justifyContent: "space-between",
+        }}
+      >
+        <Text style={{ textAlign: "left", fontSize: 16 }}> {item.title} </Text>
+
+        <TouchableOpacity onPress={() => taskDone(item.id)}>
+          <Ionicons
+            name="checkmark-circle-outline"
+            size={19}
+            color="#000080"
+            style={{ marginLeft:200 }}
+          />
+        </TouchableOpacity>
+
+        <TouchableOpacity onPress={() => deleteNote(item.id)}>
+          <Ionicons
+            name="trash"
+            size={19}
+            color="#000080"
+            style={{ marginRight: 15 }}
+          />
+        </TouchableOpacity>
+      </View>
+    );}
+
+    else {
+        return (
+            <View
+              style={{
+                padding: 10,
+                paddingTop: 20,
+                paddingBottom: 20,
+                borderBottomColor: "#ccc",
+                borderBottomWidth: 1,
+                flexDirection: "row",
+                justifyContent: "space-between",
+              }}
+            >
+              <Text style={{ textAlign: "left", color:"lightgrey" ,fontSize: 16 }}> {item.title} </Text>
+      
+             
+      
+              <TouchableOpacity onPress={() => deleteNote(item.id)}>
+                <Ionicons
+                  name="trash"
+                  size={19}
+                  color="#000080"
+                  style={{ marginRight: 15 }}
+                />
+              </TouchableOpacity>
+            </View>
+          );
+
+
+    }
   }
 
   return (
