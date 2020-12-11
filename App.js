@@ -1,9 +1,8 @@
 import { StatusBar } from "expo-status-bar";
 import React, { useEffect, useState} from "react";
-import { StyleSheet, Text, View } from "react-native";
+import { StyleSheet, Text, View, FlatList, TouchableOpacity  } from "react-native";
 import { createStackNavigator } from "@react-navigation/stack";
 import { NavigationContainer } from "@react-navigation/native";
-import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
 import { Ionicons } from "@expo/vector-icons";
 import * as SQLite from "expo-sqlite";
 
@@ -33,12 +32,13 @@ function NotesScreen({ navigation }) {
   });
 
   function addNote() {
-   let newNote = {
-     title: "Sample new note",
-     done: false,
-     id: notes.length.toString(),
-   };
-   setNotes([...notes, newNote]);
+  //  const newNote = {
+  //    title: "Sample new note",
+  //    done: false,
+  //    id: notes.length.toString(),
+  //  };
+  //  setNotes([...notes, newNote]);
+  navigation.navigate("Add Note");
   }
 
   function renderItem({ item }){
@@ -69,35 +69,64 @@ function NotesScreen({ navigation }) {
   );
 }
 
+const InnerStack = createStackNavigator();
+
+
+function NotesStack() {
+  return (
+    <InnerStack.Navigator>
+      <InnerStack.Screen
+        name="Notes"
+        component={NotesScreen}
+        options={{
+          headerTitle: "Notes, a ToDo App",
+          headerTintColor: "#000080",
+          headerTitleStyle: {
+            fontWeight: "bold",
+            fontSize: 30,
+          },
+          headerStyle: {
+            height: 120,
+            backgroundColor: "yellow",
+            borderBottomColor: "#ccc",
+            borderBottomWidth: 1,
+          },
+        }}
+      />
+    </InnerStack.Navigator>
+  );
+ }
+ 
+ function AddScreen({ navigation }) {
+  return (
+    <View style={{ flex: 1, alignItems: "center", justifyContent: "center" }}>
+      <Text>This is the add screen</Text>
+      <TouchableOpacity
+        onPress={() => navigation.goBack()}
+        style={{ padding: 10 }}
+      >
+        <Text style={{ color: "orange" }}>Dismiss</Text>
+      </TouchableOpacity>
+    </View>
+  );
+ }
+ 
+
 const Stack = createStackNavigator();
 
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator>
-        <Stack.Screen
-          name="Notes"
-          component={NotesScreen}
-          options={{
-            headerTitle: "Notes, a ToDo App",
-            headerTintColor: "#000080",
-            headerTitleStyle: {
-              fontWeight: "bold",
-              fontSize: 30,
-            },
-            headerStyle: {
-              height: 120,
-              backgroundColor: "yellow",
-              borderBottomColor: "#ccc",
-              borderBottomWidth: 1,
-              shadowColor: "black",
-              shadowOpacity: 0.2,
-              shadowRadius: 5,
-            },
-          }}
-        />
-      </Stack.Navigator>
-    </NavigationContainer>
+    <Stack.Navigator mode="modal" headerMode="none">
+      <Stack.Screen
+        name="Notes Stack"
+        component={NotesStack}
+        options={{ headerShown: false }}
+      />
+      <Stack.Screen name="Add Note" component={AddScreen} />
+    </Stack.Navigator>
+  </NavigationContainer>
+
   );
 }
 
